@@ -1,5 +1,16 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+} from 'react';
+import { identifyUserInHubspot, identifyUserInLuckyOrange } from './utils';
 
+// Grindery Engine URL
+const ENGINE_URL = 'https://orchestrator.grindery.org';
+
+// Login page URL
 export const LOGIN_URL =
   window.location.hostname.includes('-staging.grindery') ||
   window.location.hostname.includes('localhost') ||
@@ -97,6 +108,36 @@ export const GrinderyLoginProvider = ({
     setUser(null);
   };
 
+  const identifyUser = useCallback(async () => {
+    if (user && token?.access_token) {
+      try {
+        const rawResponse = await fetch(`${ENGINE_URL}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token.access_token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: new Date(),
+            method: 'or_getUserEmail',
+            params: {},
+          }),
+        });
+        const getUserEmailResponse = await rawResponse.json();
+        if (getUserEmailResponse.result) {
+          identifyUserInHubspot(user, getUserEmailResponse.result);
+          identifyUserInLuckyOrange(user, getUserEmailResponse.result);
+        } else {
+          throw new Error('No user email found');
+        }
+      } catch (error) {
+        console.error('identifyUser error: ', error);
+      }
+    }
+  }, [user, token]);
+
   // Listen for messages from the login iframe
   useEffect(() => {
     // handle message
@@ -119,6 +160,10 @@ export const GrinderyLoginProvider = ({
     // remove event listener on unmount
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  useEffect(() => {
+    identifyUser();
+  }, [identifyUser]);
 
   return (
     <GrinderyLoginContext.Provider

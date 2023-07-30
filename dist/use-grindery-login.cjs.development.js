@@ -339,6 +339,41 @@ function _asyncToGenerator(fn) {
   };
 }
 
+var identifyUserInHubspot = function identifyUserInHubspot(userId, email) {
+  var _hsq = window._hsq = window._hsq || [];
+  _hsq.push(['identify', {
+    email: email,
+    id: userId
+  }]);
+};
+var identifyUserInLuckyOrange = function identifyUserInLuckyOrange(userId, email) {
+  window.LOQ = window.LOQ || [];
+  window.LOQ.push(['ready', /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(LO) {
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return LO.$internal.ready('visitor');
+          case 2:
+            LO.visitor.identify(userId, {
+              email: email
+            });
+          case 3:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return function (_x) {
+      return _ref.apply(this, arguments);
+    };
+  }()]);
+};
+
+// Grindery Engine URL
+var ENGINE_URL = 'https://orchestrator.grindery.org';
+// Login page URL
 var LOGIN_URL = /*#__PURE__*/window.location.hostname.includes('-staging.grindery') || /*#__PURE__*/window.location.hostname.includes('localhost') || /*#__PURE__*/window.location.hostname.includes('127.0.0.1') ? 'https://login-staging.grindery.io' : 'https://login.grindery.io';
 // Default context properties
 var defaultContext = {
@@ -418,6 +453,60 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
       return _ref3.apply(this, arguments);
     };
   }();
+  var identifyUser = React.useCallback( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    var rawResponse, getUserEmailResponse;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          if (!(user && token != null && token.access_token)) {
+            _context3.next = 19;
+            break;
+          }
+          _context3.prev = 1;
+          _context3.next = 4;
+          return fetch("" + ENGINE_URL, {
+            method: 'POST',
+            headers: {
+              Authorization: "Bearer " + token.access_token,
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: new Date(),
+              method: 'or_getUserEmail',
+              params: {}
+            })
+          });
+        case 4:
+          rawResponse = _context3.sent;
+          _context3.next = 7;
+          return rawResponse.json();
+        case 7:
+          getUserEmailResponse = _context3.sent;
+          if (!getUserEmailResponse.result) {
+            _context3.next = 13;
+            break;
+          }
+          identifyUserInHubspot(user, getUserEmailResponse.result);
+          identifyUserInLuckyOrange(user, getUserEmailResponse.result);
+          _context3.next = 14;
+          break;
+        case 13:
+          throw new Error('No user email found');
+        case 14:
+          _context3.next = 19;
+          break;
+        case 16:
+          _context3.prev = 16;
+          _context3.t0 = _context3["catch"](1);
+          console.error('identifyUser error: ', _context3.t0);
+        case 19:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[1, 16]]);
+  })), [user, token]);
   // Listen for messages from the login iframe
   React.useEffect(function () {
     // handle message
@@ -442,6 +531,9 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
       return window.removeEventListener('message', handleMessage);
     };
   }, []);
+  React.useEffect(function () {
+    identifyUser();
+  }, [identifyUser]);
   return React__default.createElement(GrinderyLoginContext.Provider, {
     value: {
       token: token,
