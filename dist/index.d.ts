@@ -13,6 +13,8 @@ export declare type GrinderyLoginContextProps = {
     user: string | null;
     /** User address */
     address: string | null;
+    /** User authentication loading state */
+    isAuthenticating: boolean;
     /** Connect user */
     connect: () => void;
     /** Disconnect user */

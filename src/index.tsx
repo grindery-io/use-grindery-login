@@ -37,6 +37,9 @@ export type GrinderyLoginContextProps = {
   /** User address */
   address: string | null;
 
+  /** User authentication loading state */
+  isAuthenticating: boolean;
+
   /** Connect user */
   connect: () => void;
 
@@ -53,6 +56,7 @@ const defaultContext = {
   token: null,
   address: null,
   user: null,
+  isAuthenticating: true,
   connect: () => {},
   disconnect: () => {},
 };
@@ -82,6 +86,9 @@ export const GrinderyLoginProvider = ({
 
   // User address
   const [address, setAddress] = useState<string | null>(null);
+
+  // User authentication loading state
+  const [isAuthenticating, setIsAuthenticating] = useState<boolean>(true);
 
   // Connect user
   const connect = async () => {
@@ -151,6 +158,8 @@ export const GrinderyLoginProvider = ({
         setToken(event.data?.params?.token || null);
         setAddress(event.data?.params?.address || null);
         setUser(event.data?.params?.user || null);
+
+        setIsAuthenticating(false);
       }
     }
 
@@ -171,6 +180,7 @@ export const GrinderyLoginProvider = ({
         token,
         user,
         address,
+        isAuthenticating,
         connect,
         disconnect,
       }}

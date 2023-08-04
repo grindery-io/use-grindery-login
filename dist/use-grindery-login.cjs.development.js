@@ -380,6 +380,7 @@ var defaultContext = {
   token: null,
   address: null,
   user: null,
+  isAuthenticating: true,
   connect: function connect() {},
   disconnect: function disconnect() {}
 };
@@ -408,6 +409,10 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
   var _useState3 = React.useState(null),
     address = _useState3[0],
     setAddress = _useState3[1];
+  // User authentication loading state
+  var _useState4 = React.useState(true),
+    isAuthenticating = _useState4[0],
+    setIsAuthenticating = _useState4[1];
   // Connect user
   var connect = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -522,6 +527,7 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
         setToken(((_event$data4 = event.data) == null || (_event$data4 = _event$data4.params) == null ? void 0 : _event$data4.token) || null);
         setAddress(((_event$data5 = event.data) == null || (_event$data5 = _event$data5.params) == null ? void 0 : _event$data5.address) || null);
         setUser(((_event$data6 = event.data) == null || (_event$data6 = _event$data6.params) == null ? void 0 : _event$data6.user) || null);
+        setIsAuthenticating(false);
       }
     }
     // add event listener
@@ -539,6 +545,7 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
       token: token,
       user: user,
       address: address,
+      isAuthenticating: isAuthenticating,
       connect: connect,
       disconnect: disconnect
     }
