@@ -180,22 +180,26 @@ export const GrinderyLoginProvider = ({
   }, [identifyUser]);
 
   useEffect(() => {
-    if (!isAuthenticating) {
-      setTimeout(() => {
-        if (token?.access_token) {
-          setLoading(false);
-        } else {
-          connect();
-        }
-      }, 1000);
+    if (loader) {
+      if (!isAuthenticating) {
+        setTimeout(() => {
+          if (token?.access_token) {
+            setLoading(false);
+          } else {
+            connect();
+          }
+        }, 1000);
+      }
     }
-  }, [token, isAuthenticating, connect]);
+  }, [token, isAuthenticating, loader, connect]);
 
   useEffect(() => {
-    if (!token?.access_token) {
-      setLoading(true);
+    if (loader) {
+      if (!token?.access_token) {
+        setLoading(true);
+      }
     }
-  }, [token]);
+  }, [token, loader]);
 
   return (
     <GrinderyLoginContext.Provider

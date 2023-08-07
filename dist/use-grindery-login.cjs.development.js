@@ -546,21 +546,25 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
     identifyUser();
   }, [identifyUser]);
   React.useEffect(function () {
-    if (!isAuthenticating) {
-      setTimeout(function () {
-        if (token != null && token.access_token) {
-          setLoading(false);
-        } else {
-          connect();
-        }
-      }, 1000);
+    if (loader) {
+      if (!isAuthenticating) {
+        setTimeout(function () {
+          if (token != null && token.access_token) {
+            setLoading(false);
+          } else {
+            connect();
+          }
+        }, 1000);
+      }
     }
-  }, [token, isAuthenticating, connect]);
+  }, [token, isAuthenticating, loader, connect]);
   React.useEffect(function () {
-    if (!(token != null && token.access_token)) {
-      setLoading(true);
+    if (loader) {
+      if (!(token != null && token.access_token)) {
+        setLoading(true);
+      }
     }
-  }, [token]);
+  }, [token, loader]);
   return React__default.createElement(GrinderyLoginContext.Provider, {
     value: {
       token: token,
