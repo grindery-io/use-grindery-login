@@ -49,6 +49,7 @@ export type GrinderyLoginContextProps = {
 
 export type GrinderyLoginProviderProps = {
   children: React.ReactNode;
+  loader?: React.ReactNode;
 };
 
 // Default context properties
@@ -77,6 +78,7 @@ export const GrinderyLoginContext = createContext<GrinderyLoginContextProps>(
  */
 export const GrinderyLoginProvider = ({
   children,
+  loader,
 }: GrinderyLoginProviderProps) => {
   // Authentication token object
   const [token, setToken] = useState<AuthToken | null>(null);
@@ -89,6 +91,9 @@ export const GrinderyLoginProvider = ({
 
   // User authentication loading state
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(true);
+
+  // Loading state
+  const [loading, setLoading] = React.useState(true);
 
   // Connect user
   const connect = async () => {
@@ -174,6 +179,24 @@ export const GrinderyLoginProvider = ({
     identifyUser();
   }, [identifyUser]);
 
+  useEffect(() => {
+    if (!isAuthenticating) {
+      setTimeout(() => {
+        if (token?.access_token) {
+          setLoading(false);
+        } else {
+          connect();
+        }
+      }, 1000);
+    }
+  }, [token, isAuthenticating, connect]);
+
+  useEffect(() => {
+    if (!token?.access_token) {
+      setLoading(true);
+    }
+  }, [token]);
+
   return (
     <GrinderyLoginContext.Provider
       value={{
@@ -192,7 +215,7 @@ export const GrinderyLoginProvider = ({
         src={`${LOGIN_URL}/session`}
         style={{ display: 'none' }}
       />
-      {children}
+      {loading && loader ? loader : children}
     </GrinderyLoginContext.Provider>
   );
 };

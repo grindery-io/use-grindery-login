@@ -389,7 +389,8 @@ var GrinderyLoginContext = /*#__PURE__*/createContext(defaultContext);
  * It also exposes the context via the useGrinderyLogin hook.
  */
 var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
-  var children = _ref.children;
+  var children = _ref.children,
+    loader = _ref.loader;
   // Authentication token object
   var _useState = useState(null),
     token = _useState[0],
@@ -406,6 +407,10 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
   var _useState4 = useState(true),
     isAuthenticating = _useState4[0],
     setIsAuthenticating = _useState4[1];
+  // Loading state
+  var _React$useState = React.useState(true),
+    loading = _React$useState[0],
+    setLoading = _React$useState[1];
   // Connect user
   var connect = /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
@@ -533,6 +538,22 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
   useEffect(function () {
     identifyUser();
   }, [identifyUser]);
+  useEffect(function () {
+    if (!isAuthenticating) {
+      setTimeout(function () {
+        if (token != null && token.access_token) {
+          setLoading(false);
+        } else {
+          connect();
+        }
+      }, 1000);
+    }
+  }, [token, isAuthenticating, connect]);
+  useEffect(function () {
+    if (!(token != null && token.access_token)) {
+      setLoading(true);
+    }
+  }, [token]);
   return React.createElement(GrinderyLoginContext.Provider, {
     value: {
       token: token,
@@ -549,7 +570,7 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
     style: {
       display: 'none'
     }
-  }), children);
+  }), loading && loader ? loader : children);
 };
 /** Grindery Login Hook */
 var useGrinderyLogin = function useGrinderyLogin() {

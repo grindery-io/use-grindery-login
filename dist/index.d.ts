@@ -22,6 +22,7 @@ export declare type GrinderyLoginContextProps = {
 };
 export declare type GrinderyLoginProviderProps = {
     children: React.ReactNode;
+    loader?: React.ReactNode;
 };
 /** Grindery Nexus Context */
 export declare const GrinderyLoginContext: React.Context<GrinderyLoginContextProps>;
@@ -34,7 +35,7 @@ export declare const GrinderyLoginContext: React.Context<GrinderyLoginContextPro
  *
  * It also exposes the context via the useGrinderyLogin hook.
  */
-export declare const GrinderyLoginProvider: ({ children, }: GrinderyLoginProviderProps) => React.JSX.Element;
+export declare const GrinderyLoginProvider: ({ children, loader, }: GrinderyLoginProviderProps) => React.JSX.Element;
 /** Grindery Login Hook */
 export declare const useGrinderyLogin: () => GrinderyLoginContextProps;
 export default GrinderyLoginProvider;
