@@ -49,7 +49,14 @@ export type GrinderyLoginContextProps = {
 
 export type GrinderyLoginProviderProps = {
   children: React.ReactNode;
+  /**
+   * Loader component, visible while user is authenticating
+   */
   loader?: React.ReactNode;
+  /**
+   * URL to redirect to after user disconnects
+   */
+  disconnectRedirectUrl?: string;
 };
 
 // Default context properties
@@ -79,6 +86,7 @@ export const GrinderyLoginContext = createContext<GrinderyLoginContextProps>(
 export const GrinderyLoginProvider = ({
   children,
   loader,
+  disconnectRedirectUrl,
 }: GrinderyLoginProviderProps) => {
   // Authentication token object
   const [token, setToken] = useState<AuthToken | null>(null);
@@ -115,11 +123,18 @@ export const GrinderyLoginProvider = ({
       },
       LOGIN_URL
     );
+    // clear state
     setToken(null);
     setAddress(null);
     setUser(null);
+
+    // redirect to disconnectRedirectUrl if provided
+    if (disconnectRedirectUrl) {
+      window.location.href = disconnectRedirectUrl;
+    }
   };
 
+  // Identify user with email in Hubspot and Lucky Orange
   const identifyUser = useCallback(async () => {
     if (user && token?.access_token) {
       try {
@@ -175,6 +190,7 @@ export const GrinderyLoginProvider = ({
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  // Identify user on user change
   useEffect(() => {
     identifyUser();
   }, [identifyUser]);

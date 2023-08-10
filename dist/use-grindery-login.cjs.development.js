@@ -397,7 +397,8 @@ var GrinderyLoginContext = /*#__PURE__*/React.createContext(defaultContext);
  */
 var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
   var children = _ref.children,
-    loader = _ref.loader;
+    loader = _ref.loader,
+    disconnectRedirectUrl = _ref.disconnectRedirectUrl;
   // Authentication token object
   var _useState = React.useState(null),
     token = _useState[0],
@@ -450,10 +451,15 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
             (_iframe$contentWindow = iframe.contentWindow) == null ? void 0 : _iframe$contentWindow.postMessage({
               method: 'grindery-auth-session-clear'
             }, LOGIN_URL);
+            // clear state
             setToken(null);
             setAddress(null);
             setUser(null);
-          case 5:
+            // redirect to disconnectRedirectUrl if provided
+            if (disconnectRedirectUrl) {
+              window.location.href = disconnectRedirectUrl;
+            }
+          case 6:
           case "end":
             return _context2.stop();
         }
@@ -463,6 +469,7 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
       return _ref3.apply(this, arguments);
     };
   }();
+  // Identify user with email in Hubspot and Lucky Orange
   var identifyUser = React.useCallback( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
     var rawResponse, getUserEmailResponse;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
@@ -542,6 +549,7 @@ var GrinderyLoginProvider = function GrinderyLoginProvider(_ref) {
       return window.removeEventListener('message', handleMessage);
     };
   }, []);
+  // Identify user on user change
   React.useEffect(function () {
     identifyUser();
   }, [identifyUser]);
