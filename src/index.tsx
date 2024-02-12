@@ -8,15 +8,15 @@ import React, {
 import { identifyUserInHubspot, identifyUserInLuckyOrange } from './utils';
 
 // Grindery Engine URL
-const ENGINE_URL = 'https://orchestrator.grindery.org';
+const ENGINE_URL = 'https://orchestrator.grindery.com';
 
 // Login page URL
 export const LOGIN_URL =
   window.location.hostname.includes('-staging.grindery') ||
   window.location.hostname.includes('localhost') ||
   window.location.hostname.includes('127.0.0.1')
-    ? 'https://login-staging.grindery.io'
-    : 'https://login.grindery.io';
+    ? 'https://login-staging.grindery.com'
+    : 'https://login.grindery.com';
 
 // Authentication token object definition
 export type AuthToken = {

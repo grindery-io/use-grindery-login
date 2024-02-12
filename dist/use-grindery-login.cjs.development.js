@@ -372,9 +372,9 @@ var identifyUserInLuckyOrange = function identifyUserInLuckyOrange(userId, email
 };
 
 // Grindery Engine URL
-var ENGINE_URL = 'https://orchestrator.grindery.org';
+var ENGINE_URL = 'https://orchestrator.grindery.com';
 // Login page URL
-var LOGIN_URL = /*#__PURE__*/window.location.hostname.includes('-staging.grindery') || /*#__PURE__*/window.location.hostname.includes('localhost') || /*#__PURE__*/window.location.hostname.includes('127.0.0.1') ? 'https://login-staging.grindery.io' : 'https://login.grindery.io';
+var LOGIN_URL = /*#__PURE__*/window.location.hostname.includes('-staging.grindery') || /*#__PURE__*/window.location.hostname.includes('localhost') || /*#__PURE__*/window.location.hostname.includes('127.0.0.1') ? 'https://login-staging.grindery.com' : 'https://login.grindery.com';
 // Default context properties
 var defaultContext = {
   token: null,
